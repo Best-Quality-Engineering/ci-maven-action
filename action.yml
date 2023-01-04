@@ -1,0 +1,37 @@
+name: CI Maven
+description: Executes Maven goals with CI friendly properties
+inputs:
+  errors:
+    description: Enable error messages
+    required: false
+    default: "true"
+  batch-mode:
+    description: Enable batch mode
+    required: false
+    default: "true"
+  no-transfer-progress:
+    description: Enable no transfer progress
+    required: false
+    default: "true"
+  profiles:
+    description: Comma separated list of profiles to activate
+    required: false
+    default: "undefined"
+  goals:
+    description: Goals to execute
+    required: true
+  revision:
+    description: The Maven CI-friendly revision property to use
+    required: false
+    default: "undefined"
+  sha1:
+    description: The Maven CI-friendly sha1 property to use
+    required: false
+    default: "undefined"
+  changelist:
+    description: The Maven CI-friendly changelist property to use
+    required: false
+    default: "undefined"
+runs:
+  using: node16
+  main: dist/index.js
