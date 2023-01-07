@@ -87,7 +87,42 @@ describe("The action function", () => {
     describe("validation", () => {
         it("should fail when no goal or phase is specified", async () => {
             await expect(() => action()).rejects
-                .toThrowError("Maven goal(s) and/or phase(s) to execute must be specified")
+                .toThrowError("Maven goal(s) and/or phase(s) to execute must be specified");
+        });
+    });
+
+    describe("maven options", () => {
+        beforeEach(() => {
+            process.env.MAVEN_OPTS = "-Xms64m -Xmx128m";
+            process.env[INPUT_MAVEN_OPTS] = "-Xms256m -Xmx512m";
+            process.env[INPUT_POM_FILE] = "test-resources/single-module/pom.xml";
+        });
+
+        afterEach(() => {
+            delete process.env.MAVEN_OPTS;
+        });
+
+        it("should restore original options on success", async () => {
+            process.env[INPUT_PHASES] = "install";
+
+            expect(process.env.MAVEN_OPTS)
+                .toEqual("-Xms64m -Xmx128m");
+
+            await action();
+
+            expect(process.env.MAVEN_OPTS)
+                .toEqual("-Xms64m -Xmx128m");
+        });
+
+        it("should restore original options on failure", async () => {
+            expect(process.env.MAVEN_OPTS)
+                .toEqual("-Xms64m -Xmx128m");
+
+            await expect(() => action()).rejects
+                .toThrowError("Maven goal(s) and/or phase(s) to execute must be specified");
+
+            expect(process.env.MAVEN_OPTS)
+                .toEqual("-Xms64m -Xmx128m");
         });
     });
 

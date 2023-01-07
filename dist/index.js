@@ -290,8 +290,12 @@ const MavenArguments = __nccwpck_require__(518)
  * @return {Promise<void>}
  */
 const action = async ({outStream = undefined, errStream = undefined, listeners = undefined} = {}) => {
-    process.env.MAVEN_OPTS = core.getInput("maven-opts", {required: false});
+    const originalMavenOptions = process.env.MAVEN_OPTS;
     try {
+        const overrideMavenOptions = core.getInput("maven-opts", {required: false});
+        if (overrideMavenOptions) {
+            process.env.MAVEN_OPTS = overrideMavenOptions;
+        }
         await exec.exec(
             "mvn",
             new MavenArguments()
@@ -330,6 +334,8 @@ const action = async ({outStream = undefined, errStream = undefined, listeners =
     } catch (error) {
         core.setFailed(error.message);
         throw error;
+    } finally {
+        process.env.MAVEN_OPTS = originalMavenOptions;
     }
 }
 
