@@ -16,6 +16,26 @@ inputs:
     description: Do not display transfer progress when downloading or uploading
     required: false
     default: "true"
+  fail-at-end:
+    description: Only fail the build afterwards; allow all non-impacted builds to continue
+    required: false
+    default: "false"
+  fail-fast:
+    description: Stop at first failure in reactorized builds
+    required: false
+    default: "false"
+  fail-never:
+    description: NEVER fail the build, regardless of project result
+    required: false
+    default: "false"
+  also-make:
+    description: If project list is specified, also build projects required by the list
+    required: false
+    default: "false"
+  also-make-dependents:
+    description: If project list is specified, also build projects that depend on projects on the list
+    required: false
+    default: "false"
   settings-file:
     description: Alternate path for the user settings file
     required: false

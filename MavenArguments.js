@@ -86,6 +86,46 @@ class MavenArguments {
     }
 
     /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withAlsoMake(enabled = false) {
+        return this.withToggle("--also-make", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withAlsoMakeDependents(enabled = false) {
+        return this.withToggle("--also-make-dependents", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withFailAtEnd(enabled = false) {
+        return this.withToggle("--fail-at-end", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withFailFast(enabled = false) {
+        return this.withToggle("--fail-fast", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withFailNever(enabled = false) {
+        return this.withToggle("--fail-never", enabled);
+    }
+
+    /**
      * @param {string} file
      * @return {MavenArguments}
      */

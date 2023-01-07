@@ -92,6 +92,46 @@ class MavenArguments {
     }
 
     /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withAlsoMake(enabled = false) {
+        return this.withToggle("--also-make", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withAlsoMakeDependents(enabled = false) {
+        return this.withToggle("--also-make-dependents", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withFailAtEnd(enabled = false) {
+        return this.withToggle("--fail-at-end", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withFailFast(enabled = false) {
+        return this.withToggle("--fail-fast", enabled);
+    }
+
+    /**
+     * @param {boolean} enabled
+     * @return {MavenArguments}
+     */
+    withFailNever(enabled = false) {
+        return this.withToggle("--fail-never", enabled);
+    }
+
+    /**
      * @param {string} file
      * @return {MavenArguments}
      */
@@ -255,10 +295,15 @@ const action = async ({outStream = undefined, errStream = undefined, listeners =
         await exec.exec(
             "mvn",
             new MavenArguments()
-                // boolean options
+                // Toggle Options
                 .withErrors(core.getBooleanInput("errors", {required: true}))
                 .withBatchMode(core.getBooleanInput("batch-mode", {required: true}))
                 .withNoTransferProgress(core.getBooleanInput("no-transfer-progress", {required: true}))
+                .withAlsoMake(core.getBooleanInput("also-make", {required: true}))
+                .withAlsoMakeDependents(core.getBooleanInput("also-make-dependents", {required: true}))
+                .withFailAtEnd(core.getBooleanInput("fail-at-end", {required: true}))
+                .withFailFast(core.getBooleanInput("fail-fast", {required: true}))
+                .withFailNever(core.getBooleanInput("fail-never", {required: true}))
                 // Options
                 .withSettingsFile(core.getInput("settings-file", {required: false}))
                 .withToolchainsFile(core.getInput("toolchains-file", {required: false}))
@@ -266,7 +311,7 @@ const action = async ({outStream = undefined, errStream = undefined, listeners =
                 .withProfiles(core.getInput("profiles", {required: false}))
                 .withProjects(core.getInput("projects", {required: false}))
                 .withThreads(core.getInput("threads", {required: false}))
-                // System properties
+                // System Properties
                 .withSystemProperties(core.getMultilineInput("system-properties", {required: false}))
                 .withRevisionProperty(core.getInput("revision", {required: false}))
                 .withSha1Property(core.getInput("sha1", {required: false}))

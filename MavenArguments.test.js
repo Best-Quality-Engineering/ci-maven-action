@@ -99,6 +99,121 @@ describe("The MavenArguments component", () => {
                     .toEqual(new Set());
             });
         });
+
+        describe("also make", () => {
+            it("should not include toggle implicitly", async () => {
+                args.withAlsoMake();
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+
+            it("should include toggle when enabled", async () => {
+                args.withAlsoMake(true);
+
+                expect(args.toggles)
+                    .toEqual(new Set(["--also-make"]));
+            });
+
+            it("should not include toggle when disabled", async () => {
+                args.withAlsoMake(false);
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+        });
+
+        describe("also make dependents", () => {
+            it("should not include toggle implicitly", async () => {
+                args.withAlsoMakeDependents();
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+
+            it("should include toggle when enabled", async () => {
+                args.withAlsoMakeDependents(true);
+
+                expect(args.toggles)
+                    .toEqual(new Set(["--also-make-dependents"]));
+            });
+
+            it("should not include toggle when disabled", async () => {
+                args.withAlsoMakeDependents(false);
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+        });
+
+        describe("fail at end", () => {
+            it("should not include toggle implicitly", async () => {
+                args.withFailAtEnd();
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+
+            it("should include toggle when enabled", async () => {
+                args.withFailAtEnd(true);
+
+                expect(args.toggles)
+                    .toEqual(new Set(["--fail-at-end"]));
+            });
+
+            it("should not include toggle when disabled", async () => {
+                args.withFailAtEnd(false);
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+        });
+
+        describe("fail fast", () => {
+            it("should not include toggle implicitly", async () => {
+                args.withFailFast();
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+
+            it("should include toggle when enabled", async () => {
+                args.withFailFast(true);
+
+                expect(args.toggles)
+                    .toEqual(new Set(["--fail-fast"]));
+            });
+
+            it("should not include toggle when disabled", async () => {
+                args.withFailFast(false);
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+        });
+
+        describe("fail never", () => {
+            it("should not include toggle implicitly", async () => {
+                args.withFailNever();
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+
+            it("should include toggle when enabled", async () => {
+                args.withFailNever(true);
+
+                expect(args.toggles)
+                    .toEqual(new Set(["--fail-never"]));
+            });
+
+            it("should not include toggle when disabled", async () => {
+                args.withFailNever(false);
+
+                expect(args.toggles)
+                    .toEqual(new Set());
+            });
+        });
     });
 
     describe("options", () => {

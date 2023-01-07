@@ -8,6 +8,11 @@ const INPUT_MAVEN_OPTS = "INPUT_MAVEN-OPTS";
 const INPUT_ERRORS = "INPUT_ERRORS";
 const INPUT_BATCH_MODE = "INPUT_BATCH-MODE";
 const INPUT_NO_TRANSFER_PROGRESS = "INPUT_NO-TRANSFER-PROGRESS";
+const INPUT_ALSO_MAKE = "INPUT_ALSO-MAKE";
+const INPUT_ALSO_MAKE_DEPENDENTS = "INPUT_ALSO-MAKE-DEPENDENTS";
+const INPUT_FAIL_AT_END = "INPUT_FAIL-AT-END";
+const INPUT_FAIL_FAST = "INPUT_FAIL-FAST";
+const INPUT_FAIL_NEVER = "INPUT_FAIL-NEVER";
 
 const INPUT_SETTINGS_FILE = "INPUT_SETTINGS-FILE";
 const INPUT_TOOLCHAINS_FILE = "INPUT_TOOLCHAINS-FILE";
@@ -16,6 +21,7 @@ const INPUT_PROFILES = "INPUT_PROFILES";
 const INPUT_PROJECTS = "INPUT_PROJECTS";
 const INPUT_THREADS = "INPUT_THREADS";
 
+const INPUT_SYSTEM_PROPERTIES = "INPUT_SYSTEM-PROPERTIES";
 const INPUT_REVISION = "INPUT_REVISION";
 const INPUT_SHA1 = "INPUT_SHA1";
 const INPUT_CHANGELIST = "INPUT_CHANGELIST";
@@ -36,19 +42,31 @@ describe("The action function", () => {
 
     beforeEach(() => {
         // Setup inputs with default values
-        process.env["INPUT_ERRORS"] = "true";
-        process.env["INPUT_BATCH-MODE"] = "true";
-        process.env["INPUT_NO-TRANSFER-PROGRESS"] = "true";
+        process.env[INPUT_ERRORS] = "true";
+        process.env[INPUT_BATCH_MODE] = "true";
+        process.env[INPUT_NO_TRANSFER_PROGRESS] = "true";
+        process.env[INPUT_ALSO_MAKE] = "false";
+        process.env[INPUT_ALSO_MAKE_DEPENDENTS] = "false";
+        process.env[INPUT_FAIL_AT_END] = "false";
+        process.env[INPUT_FAIL_FAST] = "false";
+        process.env[INPUT_FAIL_NEVER] = "false";
 
-        process.env["INPUT_REVISION"] = "undefined";
-        process.env["INPUT_SHA1"] = "undefined";
-        process.env["INPUT_CHANGELIST"] = "undefined";
+        process.env[INPUT_REVISION] = "undefined";
+        process.env[INPUT_SHA1] = "undefined";
+        process.env[INPUT_CHANGELIST] = "undefined";
     });
 
     afterEach(() => {
+        delete process.env[INPUT_MAVEN_OPTS];
+
         delete process.env[INPUT_ERRORS];
         delete process.env[INPUT_BATCH_MODE];
         delete process.env[INPUT_NO_TRANSFER_PROGRESS];
+        delete process.env[INPUT_ALSO_MAKE];
+        delete process.env[INPUT_ALSO_MAKE_DEPENDENTS];
+        delete process.env[INPUT_FAIL_AT_END];
+        delete process.env[INPUT_FAIL_FAST];
+        delete process.env[INPUT_FAIL_NEVER];
 
         delete process.env[INPUT_SETTINGS_FILE];
         delete process.env[INPUT_TOOLCHAINS_FILE];
@@ -57,6 +75,7 @@ describe("The action function", () => {
         delete process.env[INPUT_PROJECTS];
         delete process.env[INPUT_THREADS];
 
+        delete process.env[INPUT_SYSTEM_PROPERTIES];
         delete process.env[INPUT_REVISION];
         delete process.env[INPUT_SHA1];
         delete process.env[INPUT_CHANGELIST];
@@ -188,6 +207,7 @@ describe("The action function", () => {
 
         it("should execute with all inputs specified", async () => {
             process.env[INPUT_MAVEN_OPTS] = "-Xms256m -Xmx512m";
+            process.env[INPUT_SYSTEM_PROPERTIES] = "property=value, flag";
             process.env[INPUT_REVISION] = "22.22.22";
             process.env[INPUT_SHA1] = "-235782193";
             process.env[INPUT_CHANGELIST] = ".Release";
@@ -335,7 +355,7 @@ describe("The action function", () => {
 
         it("should execute with all inputs specified", async () => {
             process.env[INPUT_MAVEN_OPTS] = "-Xms256m -Xmx512m";
-            process.env[INPUT_REVISION] = "22.22.22";
+            process.env[INPUT_SYSTEM_PROPERTIES] = "property=value, flag";
             process.env[INPUT_REVISION] = "22.22.22";
             process.env[INPUT_SHA1] = "-235782193";
             process.env[INPUT_CHANGELIST] = ".Release";
