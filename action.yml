@@ -1,5 +1,8 @@
 name: CI Maven
-description: Executes Maven goals with CI friendly properties
+description: An action for executing Maven commands supporting patterns described in the Maven CI Friendly documentation.
+branding:
+  icon: rotate-cw
+  color: blue
 inputs:
   maven-opts:
     description: Specifies parameters used to start up the JVM running Maven
