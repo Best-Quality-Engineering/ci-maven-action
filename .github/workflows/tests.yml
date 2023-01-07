@@ -1,0 +1,52 @@
+name: Tests
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feature/*
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: zulu
+          cache: maven
+      - run: npm ci
+      - run: npm test
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: zulu
+          cache: maven
+      - name: "Single Module"
+        uses: ./
+        with:
+          settings-path: test-resources/settings.xml
+          toolchains-path: test-resources/toolchains.xml
+          project-path: test-resources/single-module/pom.xml
+          profiles: ci, tools
+          revision: 2.22.2
+          sha1: -${{github.run_id}}
+          changelist: -SNAPSHOT
+          phases: clean, install
+      - name: "Multi Module"
+        uses: ./
+        with:
+          settings-path: test-resources/settings.xml
+          toolchains-path: test-resources/toolchains.xml
+          project-path: test-resources/multi-module/pom.xml
+          profiles: ci, tools
+          revision: 2.22.2
+          sha1: -${{github.run_id}}
+          changelist: -SNAPSHOT
+          phases: clean, install

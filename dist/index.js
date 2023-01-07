@@ -9,8 +9,8 @@ class MavenArguments {
     constructor() {
         this.toggles = new Set();
         this.options = [];
-        this.goals = undefined;
-        this.phases = undefined;
+        this.goals = [];
+        this.phases = [];
     }
 
     withToggle(name, enabled = true) {
@@ -37,30 +37,23 @@ class MavenArguments {
         return this.withToggle("--batch-mode", enabled);
     }
 
-    withRevisionProperty(revision) {
-        if (revision !== undefined && revision !== "undefined") {
-            this.withOption(`-D revision="${revision}"`);
+    withSettings(settings = "") {
+        if (settings) {
+            this.withOption(`-s=${settings}`);
         }
         return this;
     }
 
-    withSha1Property(sha1) {
-        if (sha1 !== undefined && sha1 !== "undefined") {
-            this.withOption(`-D sha1="${sha1}"`);
-        }
-        return this;
-    }
-
-    withChangelistProperty(changelist) {
-        if (changelist !== undefined && changelist !== "undefined") {
-            this.withOption(`-D changelist="${changelist}"`);
+    withToolchains(toolchains = "") {
+        if (toolchains) {
+            this.withOption(`-t=${toolchains}`);
         }
         return this;
     }
 
     withFile(file = "") {
         if (file) {
-            this.withOption(`-f ${file}`);
+            this.withOption(`-f=${file}`);
         }
         return this;
     }
@@ -69,7 +62,7 @@ class MavenArguments {
         profiles.split(/[ ,]+/)
             .map(profile => profile.trim())
             .filter(profile => profile !== "")
-            .forEach(profile => this.withOption(`-P ${profile}`));
+            .forEach(profile => this.withOption(`-P=${profile}`));
         return this;
     }
 
@@ -77,27 +70,34 @@ class MavenArguments {
         projects.split(/[ ,]+/)
             .map(project => project.trim())
             .filter(project => project !== "")
-            .forEach(project => this.withOption(`-pl ${project}`));
-        return this;
-    }
-
-    withSettings(settings = "") {
-        if (settings) {
-            this.withOption(`-s ${settings}`);
-        }
-        return this;
-    }
-
-    withToolchains(toolchains = "") {
-        if (toolchains) {
-            this.withOption(`-t ${toolchains}`);
-        }
+            .forEach(project => this.withOption(`-pl=${project}`));
         return this;
     }
 
     withThreads(threads = "") {
         if (threads) {
-            this.withOption(`-T ${threads}`);
+            this.withOption(`-T=${threads}`);
+        }
+        return this;
+    }
+
+    withRevisionProperty(revision) {
+        if (revision !== undefined && revision !== "undefined") {
+            this.withOption(`-Drevision=${revision}`);
+        }
+        return this;
+    }
+
+    withSha1Property(sha1) {
+        if (sha1 !== undefined && sha1 !== "undefined") {
+            this.withOption(`-Dsha1=${sha1}`);
+        }
+        return this;
+    }
+
+    withChangelistProperty(changelist) {
+        if (changelist !== undefined && changelist !== "undefined") {
+            this.withOption(`-Dchangelist=${changelist}`);
         }
         return this;
     }
@@ -106,8 +106,7 @@ class MavenArguments {
         this.goals = goals
             .split(/[ ,]+/)
             .map(goal => goal.trim())
-            .filter(goal => goal !== "")
-            .join(" ");
+            .filter(goal => goal !== "");
         return this;
     }
 
@@ -115,24 +114,19 @@ class MavenArguments {
         this.phases = phases
             .split(/[ ,]+/)
             .map(phase => phase.trim())
-            .filter(phase => phase !== "")
-            .join(" ");
+            .filter(phase => phase !== "");
         return this;
     }
 
     toArray() {
-        if (!this.goals && !this.phases) {
+        if (this.goals.length === 0 && this.phases.length === 0) {
             throw new Error("Maven goal(s) and/or phase(s) to execute must be specified")
         }
         const args = [];
         this.toggles.forEach(toggle => args.push(toggle));
         this.options.forEach(option => args.push(option));
-        if (this.goals) {
-            args.push(this.goals);
-        }
-        if (this.phases) {
-            args.push(this.phases);
-        }
+        this.goals.forEach(goal => args.push(goal));
+        this.phases.forEach(phase => args.push(phase));
         return args;
     }
 }
@@ -148,31 +142,38 @@ const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
 const MavenArguments = __nccwpck_require__(518)
 
-const action = async () => {
+/**
+ * @param {import("stream").Writable} outStream
+ * @param {import("stream").Writable} errStream
+ * @param {exec.ExecListeners} listeners
+ * @return {Promise<void>}
+ */
+const action = async ({outStream = undefined, errStream = undefined, listeners = undefined} = {}) => {
     try {
         await exec.exec("mvn", new MavenArguments()
             // boolean options
             .withErrors(core.getBooleanInput("errors", {required: true}))
-            .withBatchMode(core.getBooleanInput("batch_mode", {required: true}))
-            .withNoTransferProgress(core.getBooleanInput("no_transfer_progress", {required: true}))
-            // CI-friendly properties
-            .withRevisionProperty(core.getInput("revision", {required: true}))
-            .withSha1Property(core.getInput("sha1", {required: true}))
-            .withChangelistProperty(core.getInput("changelist", {required: true}))
+            .withBatchMode(core.getBooleanInput("batch-mode", {required: true}))
+            .withNoTransferProgress(core.getBooleanInput("no-transfer-progress", {required: true}))
             // Options
-            .withFile(core.getInput("file", {required: false}))
+            .withSettings(core.getInput("settings-path", {required: false}))
+            .withToolchains(core.getInput("toolchains-path", {required: false}))
+            .withFile(core.getInput("project-path", {required: false}))
             .withProfiles(core.getInput("profiles", {required: false}))
             .withProjects(core.getInput("projects", {required: false}))
-            .withSettings(core.getInput("settings", {required: false}))
-            .withToolchains(core.getInput("toolchains", {required: false}))
             .withThreads(core.getInput("threads", {required: false}))
+            // CI-friendly properties
+            .withRevisionProperty(core.getInput("revision", {required: false}))
+            .withSha1Property(core.getInput("sha1", {required: false}))
+            .withChangelistProperty(core.getInput("changelist", {required: false}))
             // Goals
             .withGoals(core.getInput("goals", {required: false}))
             // Phases
             .withPhases(core.getInput("phases", {required: false}))
-            .toArray())
+            .toArray(), {failOnStdErr: true, outStream, errStream, listeners});
     } catch (error) {
         core.setFailed(error.message);
+        throw error;
     }
 }
 

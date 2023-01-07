@@ -1,8 +1,8 @@
 # Create a JavaScript Action
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+[![Build Status](https://github.com/Best-Quality-Engineering/ci-maven/actions/workflows/tests.yml/badge.svg)](https://github.com/Best-Quality-Engineering/ci-maven/actions/workflows/tests.yml)
+[![Distribution Status](https://github.com/Best-Quality-Engineering/ci-maven/actions/workflows/verify-distribution.yml/badge.svg)](https://github.com/Best-Quality-Engineering/ci-maven/actions/workflows/verify-distribution.yml)
+
 
 Use this template to bootstrap the creation of a JavaScript action.:rocket:
 
@@ -112,5 +112,3 @@ uses: actions/javascript-action@v1
 with:
   milliseconds: 1000
 ```
-
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:

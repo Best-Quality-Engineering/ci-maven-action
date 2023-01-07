@@ -130,14 +130,14 @@ describe("The MavenArguments component", () => {
                 args.withRevisionProperty("");
 
                 expect(args.options)
-                    .toEqual(["-D revision=\"\""]);
+                    .toEqual(["-Drevision="]);
             });
 
             it("should specify option when value is present", async () => {
                 args.withRevisionProperty("2.2.2");
 
                 expect(args.options)
-                    .toEqual(["-D revision=\"2.2.2\""]);
+                    .toEqual(["-Drevision=2.2.2"]);
             });
         });
 
@@ -160,14 +160,14 @@ describe("The MavenArguments component", () => {
                 args.withSha1Property("");
 
                 expect(args.options)
-                    .toEqual(["-D sha1=\"\""]);
+                    .toEqual(["-Dsha1="]);
             });
 
             it("should specify option when value is present", async () => {
                 args.withSha1Property("-12345");
 
                 expect(args.options)
-                    .toEqual(["-D sha1=\"-12345\""]);
+                    .toEqual(["-Dsha1=-12345"]);
             });
         });
 
@@ -190,14 +190,14 @@ describe("The MavenArguments component", () => {
                 args.withChangelistProperty("");
 
                 expect(args.options)
-                    .toEqual(["-D changelist=\"\""]);
+                    .toEqual(["-Dchangelist="]);
             });
 
             it("should specify option when value is present", async () => {
                 args.withChangelistProperty("-SNAPSHOT");
 
                 expect(args.options)
-                    .toEqual(["-D changelist=\"-SNAPSHOT\""]);
+                    .toEqual(["-Dchangelist=-SNAPSHOT"]);
             });
         });
 
@@ -213,7 +213,7 @@ describe("The MavenArguments component", () => {
                 args.withFile("path/to/pom.xml");
 
                 expect(args.options)
-                    .toEqual(["-f path/to/pom.xml"]);
+                    .toEqual(["-f=path/to/pom.xml"]);
             });
         });
 
@@ -229,7 +229,7 @@ describe("The MavenArguments component", () => {
                 args.withProfiles(" ci ");
 
                 expect(args.options)
-                    .toEqual(["-P ci"]);
+                    .toEqual(["-P=ci"]);
             });
 
             it("should support multiple values", async () => {
@@ -237,8 +237,8 @@ describe("The MavenArguments component", () => {
 
                 expect(args.options)
                     .toEqual([
-                        "-P ci",
-                        "-P release"
+                        "-P=ci",
+                        "-P=release"
                     ]);
             });
 
@@ -247,8 +247,8 @@ describe("The MavenArguments component", () => {
 
                 expect(args.options)
                     .toEqual([
-                        "-P ci",
-                        "-P release"
+                        "-P=ci",
+                        "-P=release"
                     ]);
             });
         });
@@ -265,7 +265,7 @@ describe("The MavenArguments component", () => {
                 args.withProjects(" api ");
 
                 expect(args.options)
-                    .toEqual(["-pl api"]);
+                    .toEqual(["-pl=api"]);
             });
 
             it("should support multiple values", async () => {
@@ -273,8 +273,8 @@ describe("The MavenArguments component", () => {
 
                 expect(args.options)
                     .toEqual([
-                        "-pl api",
-                        "-pl ui"
+                        "-pl=api",
+                        "-pl=ui"
                     ]);
             });
 
@@ -283,8 +283,8 @@ describe("The MavenArguments component", () => {
 
                 expect(args.options)
                     .toEqual([
-                        "-pl api",
-                        "-pl ui"
+                        "-pl=api",
+                        "-pl=ui"
                     ]);
             });
         });
@@ -301,7 +301,7 @@ describe("The MavenArguments component", () => {
                 args.withSettings("path/to/settings.xml");
 
                 expect(args.options)
-                    .toEqual(["-s path/to/settings.xml"]);
+                    .toEqual(["-s=path/to/settings.xml"]);
             });
         });
 
@@ -317,7 +317,7 @@ describe("The MavenArguments component", () => {
                 args.withToolchains("path/to/toolchains.xml");
 
                 expect(args.options)
-                    .toEqual(["-t path/to/toolchains.xml"]);
+                    .toEqual(["-t=path/to/toolchains.xml"]);
             });
         });
 
@@ -333,7 +333,7 @@ describe("The MavenArguments component", () => {
                 args.withThreads("5");
 
                 expect(args.options)
-                    .toEqual(["-T 5"]);
+                    .toEqual(["-T=5"]);
             });
         });
 
@@ -344,21 +344,27 @@ describe("The MavenArguments component", () => {
             args.withGoals(" ci:expand-pom ");
 
             expect(args.goals)
-                .toEqual("ci:expand-pom");
+                .toEqual(["ci:expand-pom"]);
         });
 
         it("should support multiples values", async () => {
             args.withGoals(" ci:expand-pom    ci:replace-content ");
 
             expect(args.goals)
-                .toEqual("ci:expand-pom ci:replace-content");
+                .toEqual([
+                    "ci:expand-pom",
+                    "ci:replace-content"
+                ]);
         });
 
         it("should support CSV", async () => {
             args.withGoals(" ci:expand-pom,   ci:replace-content ");
 
             expect(args.goals)
-                .toEqual("ci:expand-pom ci:replace-content");
+                .toEqual([
+                    "ci:expand-pom",
+                    "ci:replace-content"
+                ]);
         });
     });
 
@@ -367,21 +373,21 @@ describe("The MavenArguments component", () => {
             args.withPhases(" install ");
 
             expect(args.phases)
-                .toEqual("install");
+                .toEqual(["install"]);
         });
 
         it("should support multiples values", async () => {
             args.withPhases(" clean    install ");
 
             expect(args.phases)
-                .toEqual("clean install");
+                .toEqual(["clean", "install"]);
         });
 
         it("should support CSV", async () => {
             args.withPhases(" clean,  install ");
 
             expect(args.phases)
-                .toEqual("clean install");
+                .toEqual(["clean", "install"]);
         });
     });
 
@@ -412,17 +418,19 @@ describe("The MavenArguments component", () => {
                     "--batch-mode",
                     "--errors",
                     "--no-transfer-progress",
-                    "-P ci",
-                    "-D revision=\"2.2.2\"",
-                    "-D sha1=\"-397868\"",
-                    "-D changelist=\"-SNAPSHOT\"",
-                    "-pl api",
-                    "-s path/to/settings.xml",
-                    "-f path/to/pom.xml",
-                    "-t path/to/toolchains.xml",
-                    "-T 5",
-                    "ci:expand-pom ci:replace-content",
-                    "clean install"
+                    "-P=ci",
+                    "-Drevision=2.2.2",
+                    "-Dsha1=-397868",
+                    "-Dchangelist=-SNAPSHOT",
+                    "-pl=api",
+                    "-s=path/to/settings.xml",
+                    "-f=path/to/pom.xml",
+                    "-t=path/to/toolchains.xml",
+                    "-T=5",
+                    "ci:expand-pom",
+                    "ci:replace-content",
+                    "clean",
+                    "install"
                 ]);
         });
     });

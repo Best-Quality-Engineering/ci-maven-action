@@ -13,6 +13,15 @@ inputs:
     description: Do not display transfer progress when downloading or uploading
     required: false
     default: "true"
+  settings-path:
+    description: Alternate path for the user settings file
+    required: false
+  toolchains-path:
+    description: Alternate path for the user toolchains file
+    required: false
+  project-path:
+    description: Force the use of an alternate POM file (or directory with pom.xml)
+    required: false
   revision:
     description: The CI-friendly revision property to use
     required: false
@@ -25,20 +34,11 @@ inputs:
     description: The CI-friendly changelist property to use
     required: false
     default: "undefined"
-  file:
-    description: Force the use of an alternate POM file (or directory with pom.xml)
-    required: false
   profiles:
     description: Comma-delimited list of profiles to activate
     required: false
   projects:
     description: Comma-delimited list of specified reactor projects to build instead of all projects. A project can be specified by [groupId]:artifactId or by its relative path
-    required: false
-  settings:
-    description: Alternate path for the user settings file
-    required: false
-  toolchains:
-    description: Alternate path for the user toolchains file
     required: false
   threads:
     description: Thread count, for instance 2.0C where C is core multiplied
