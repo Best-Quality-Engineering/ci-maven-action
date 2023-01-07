@@ -25,7 +25,8 @@ const action = async ({outStream = undefined, errStream = undefined, listeners =
                 .withProfiles(core.getInput("profiles", {required: false}))
                 .withProjects(core.getInput("projects", {required: false}))
                 .withThreads(core.getInput("threads", {required: false}))
-                // CI-friendly properties
+                // System properties
+                .withSystemProperties(core.getMultilineInput("system-properties", {required: false}))
                 .withRevisionProperty(core.getInput("revision", {required: false}))
                 .withSha1Property(core.getInput("sha1", {required: false}))
                 .withChangelistProperty(core.getInput("changelist", {required: false}))

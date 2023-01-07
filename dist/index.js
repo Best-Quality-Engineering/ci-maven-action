@@ -4,6 +4,9 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /***/ 518:
 /***/ ((module) => {
 
+/**
+ * Encapsulates the available Maven command line arguments
+ */
 class MavenArguments {
 
     constructor() {
@@ -31,6 +34,36 @@ class MavenArguments {
      */
     withOption(option) {
         this.options.push(option);
+        return this;
+    }
+
+    /**
+     * @param {string} name
+     * @param {string} value
+     * @return {MavenArguments}
+     */
+    withSystemProperty(name, value = undefined) {
+        if (value === undefined) {
+            this.withOption(`-D${name}`);
+        } else {
+            this.withOption(`-D${name}=${value}`);
+        }
+        return this;
+    }
+
+    /**
+     * @param {string[]} lines
+     * @return {MavenArguments}
+     */
+    withSystemProperties(lines = []) {
+        lines.flatMap(line =>
+            line.split(",")
+                .map(definition => definition.trim())
+                .filter(definition => definition !== ""))
+            .forEach(definition => {
+                const [name, value] = definition.split("=");
+                this.withSystemProperty(name, value);
+            });
         return this;
     }
 
@@ -132,7 +165,7 @@ class MavenArguments {
      */
     withRevisionProperty(revision) {
         if (revision !== undefined && revision !== "undefined") {
-            this.withOption(`-Drevision=${revision}`);
+            this.withSystemProperty("revision", revision);
         }
         return this;
     }
@@ -143,7 +176,7 @@ class MavenArguments {
      */
     withSha1Property(sha1) {
         if (sha1 !== undefined && sha1 !== "undefined") {
-            this.withOption(`-Dsha1=${sha1}`);
+            this.withSystemProperty("sha1", sha1);
         }
         return this;
     }
@@ -154,7 +187,7 @@ class MavenArguments {
      */
     withChangelistProperty(changelist) {
         if (changelist !== undefined && changelist !== "undefined") {
-            this.withOption(`-Dchangelist=${changelist}`);
+            this.withSystemProperty("changelist", changelist);
         }
         return this;
     }
@@ -233,7 +266,8 @@ const action = async ({outStream = undefined, errStream = undefined, listeners =
                 .withProfiles(core.getInput("profiles", {required: false}))
                 .withProjects(core.getInput("projects", {required: false}))
                 .withThreads(core.getInput("threads", {required: false}))
-                // CI-friendly properties
+                // System properties
+                .withSystemProperties(core.getMultilineInput("system-properties", {required: false}))
                 .withRevisionProperty(core.getInput("revision", {required: false}))
                 .withSha1Property(core.getInput("sha1", {required: false}))
                 .withChangelistProperty(core.getInput("changelist", {required: false}))

@@ -25,6 +25,9 @@ inputs:
   pom-file:
     description: Force the use of an alternate POM file (or directory with pom.xml)
     required: false
+  system-properties:
+    description: Defines a set of system properties in CSV or multiline format
+    required: false
   revision:
     description: The CI-friendly revision property to use
     required: false

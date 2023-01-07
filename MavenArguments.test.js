@@ -111,96 +111,6 @@ describe("The MavenArguments component", () => {
             });
         });
 
-        describe("revision ci property", () => {
-            it("should not specify option when undefined", async () => {
-                args.withRevisionProperty();
-
-                expect(args.options)
-                    .toEqual([]);
-            });
-
-            it("should not specify option when value equals undefined", async () => {
-                args.withRevisionProperty("undefined");
-
-                expect(args.options)
-                    .toEqual([]);
-            });
-
-            it("should specify option when value is empty", async () => {
-                args.withRevisionProperty("");
-
-                expect(args.options)
-                    .toEqual(["-Drevision="]);
-            });
-
-            it("should specify option when value is present", async () => {
-                args.withRevisionProperty("2.2.2");
-
-                expect(args.options)
-                    .toEqual(["-Drevision=2.2.2"]);
-            });
-        });
-
-        describe("sha1 ci property", () => {
-            it("should not specify option when undefined", async () => {
-                args.withSha1Property();
-
-                expect(args.options)
-                    .toEqual([]);
-            });
-
-            it("should not specify option when value equals undefined", async () => {
-                args.withSha1Property("undefined");
-
-                expect(args.options)
-                    .toEqual([]);
-            });
-
-            it("should specify option when value is empty", async () => {
-                args.withSha1Property("");
-
-                expect(args.options)
-                    .toEqual(["-Dsha1="]);
-            });
-
-            it("should specify option when value is present", async () => {
-                args.withSha1Property("-12345");
-
-                expect(args.options)
-                    .toEqual(["-Dsha1=-12345"]);
-            });
-        });
-
-        describe("changelist ci property", () => {
-            it("should not specify option when undefined", async () => {
-                args.withChangelistProperty();
-
-                expect(args.options)
-                    .toEqual([]);
-            });
-
-            it("should not specify option when value equals undefined", async () => {
-                args.withChangelistProperty("undefined");
-
-                expect(args.options)
-                    .toEqual([]);
-            });
-
-            it("should specify option when value is empty", async () => {
-                args.withChangelistProperty("");
-
-                expect(args.options)
-                    .toEqual(["-Dchangelist="]);
-            });
-
-            it("should specify option when value is present", async () => {
-                args.withChangelistProperty("-SNAPSHOT");
-
-                expect(args.options)
-                    .toEqual(["-Dchangelist=-SNAPSHOT"]);
-            });
-        });
-
         describe("file", () => {
             it("should ignore option when value is empty", async () => {
                 args.withPomFile("");
@@ -337,6 +247,153 @@ describe("The MavenArguments component", () => {
             });
         });
 
+    });
+
+    describe("system properties", () => {
+        describe("generic", () => {
+            it("should add system property with no value", async () => {
+                args.withSystemProperty("property");
+
+                expect(args.options)
+                    .toEqual(["-Dproperty"]);
+            });
+
+            it("should add system property with value", async () => {
+                args.withSystemProperty("property", "value");
+
+                expect(args.options)
+                    .toEqual(["-Dproperty=value"]);
+            });
+
+            it("should parse single line input containing one property with no value", async () => {
+                args.withSystemProperties(["property"]);
+
+                expect(args.options)
+                    .toEqual(["-Dproperty"]);
+            });
+
+            it("should parse single line input containing one property with value", async () => {
+                args.withSystemProperties(["property=value"]);
+
+                expect(args.options)
+                    .toEqual(["-Dproperty=value"]);
+            });
+
+            it("should parse single line input containing multiple properties", async () => {
+                args.withSystemProperties(["property-1=value-1, property-2"]);
+
+                expect(args.options)
+                    .toEqual([
+                        "-Dproperty-1=value-1",
+                        "-Dproperty-2",
+                    ]);
+            });
+
+            it("should parse multi line input containing multiple properties", async () => {
+                args.withSystemProperties([
+                    "property-1=value-1, property-2",
+                    "property-3, property-4=value-4"
+                ]);
+
+                expect(args.options)
+                    .toEqual([
+                        "-Dproperty-1=value-1",
+                        "-Dproperty-2",
+                        "-Dproperty-3",
+                        "-Dproperty-4=value-4"
+                    ]);
+            });
+        });
+
+        describe("revision", () => {
+            it("should not specify option when undefined", async () => {
+                args.withRevisionProperty();
+
+                expect(args.options)
+                    .toEqual([]);
+            });
+
+            it("should not specify option when value equals undefined", async () => {
+                args.withRevisionProperty("undefined");
+
+                expect(args.options)
+                    .toEqual([]);
+            });
+
+            it("should specify option when value is empty", async () => {
+                args.withRevisionProperty("");
+
+                expect(args.options)
+                    .toEqual(["-Drevision="]);
+            });
+
+            it("should specify option when value is present", async () => {
+                args.withRevisionProperty("2.2.2");
+
+                expect(args.options)
+                    .toEqual(["-Drevision=2.2.2"]);
+            });
+        });
+
+        describe("sha1", () => {
+            it("should not specify option when undefined", async () => {
+                args.withSha1Property();
+
+                expect(args.options)
+                    .toEqual([]);
+            });
+
+            it("should not specify option when value equals undefined", async () => {
+                args.withSha1Property("undefined");
+
+                expect(args.options)
+                    .toEqual([]);
+            });
+
+            it("should specify option when value is empty", async () => {
+                args.withSha1Property("");
+
+                expect(args.options)
+                    .toEqual(["-Dsha1="]);
+            });
+
+            it("should specify option when value is present", async () => {
+                args.withSha1Property("-12345");
+
+                expect(args.options)
+                    .toEqual(["-Dsha1=-12345"]);
+            });
+        });
+
+        describe("changelist", () => {
+            it("should not specify option when undefined", async () => {
+                args.withChangelistProperty();
+
+                expect(args.options)
+                    .toEqual([]);
+            });
+
+            it("should not specify option when value equals undefined", async () => {
+                args.withChangelistProperty("undefined");
+
+                expect(args.options)
+                    .toEqual([]);
+            });
+
+            it("should specify option when value is empty", async () => {
+                args.withChangelistProperty("");
+
+                expect(args.options)
+                    .toEqual(["-Dchangelist="]);
+            });
+
+            it("should specify option when value is present", async () => {
+                args.withChangelistProperty("-SNAPSHOT");
+
+                expect(args.options)
+                    .toEqual(["-Dchangelist=-SNAPSHOT"]);
+            });
+        });
     });
 
     describe("goals", () => {
