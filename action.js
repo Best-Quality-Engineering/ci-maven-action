@@ -3,12 +3,10 @@ const exec = require("@actions/exec");
 const MavenArguments = require("./MavenArguments")
 
 /**
- * @param {import("stream").Writable} outStream
- * @param {import("stream").Writable} errStream
  * @param {exec.ExecListeners} listeners
  * @return {Promise<void>}
  */
-const action = async ({outStream = undefined, errStream = undefined, listeners = undefined} = {}) => {
+const action = async (listeners = undefined) => {
     const originalMavenOptions = process.env.MAVEN_OPTS;
     try {
         const overrideMavenOptions = core.getInput("maven-opts", {required: false});
@@ -46,8 +44,6 @@ const action = async ({outStream = undefined, errStream = undefined, listeners =
                 .toArray(),
             {
                 failOnStdErr: true,
-                outStream,
-                errStream,
                 listeners
             });
     } catch (error) {

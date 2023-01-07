@@ -1,5 +1,6 @@
 const process = require("process");
 const action = require("./action");
+const DebugListener = require("./lib/test/DebugListener");
 require("./lib/test/action-expectations");
 
 
@@ -33,11 +34,15 @@ jest.setTimeout(10000);
 
 describe("The action function", () => {
 
+    /**
+     * @return {Promise<Command>}
+     */
     async function runAction() {
-        // TODO: Capture output
-        const output = Buffer.from("[command]/usr/local/bin/mvn --errors --batch-mode --no-transfer-progress");
-        await action({outStream: undefined});
-        return output;
+        const listener = new DebugListener();
+        await action({
+            debug: (data) => listener.onDebug(data)
+        });
+        return listener.command;
     }
 
     beforeEach(() => {
@@ -135,28 +140,54 @@ describe("The action function", () => {
             process.env[INPUT_PHASES] = "clean";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "clean"
+                ]);
         });
 
         it("should execute multiple phases", async () => {
             process.env[INPUT_PHASES] = "clean install";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "clean",
+                    "install"
+                ]);
         });
 
         it("should execute single goal", async () => {
             process.env[INPUT_GOALS] = "ci:expand-pom";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "ci:expand-pom"
+                ]);
         });
 
         it("should execute multiple goals", async () => {
             process.env[INPUT_GOALS] = "ci:expand-pom ci:replace-content";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "ci:expand-pom",
+                    "ci:replace-content",
+                ]);
         });
 
         it("should use revision ci-friendly property", async () => {
@@ -164,7 +195,14 @@ describe("The action function", () => {
             process.env[INPUT_REVISION] = "22.22.22";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-Drevision=22.22.22",
+                    "install"
+                ]);
         });
 
         it("should use sha1 ci-friendly property", async () => {
@@ -172,7 +210,14 @@ describe("The action function", () => {
             process.env[INPUT_SHA1] = "-78125784";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-Dsha1=-78125784",
+                    "install"
+                ]);
         });
 
         it("should use sha1 ci-friendly property when empty", async () => {
@@ -180,7 +225,14 @@ describe("The action function", () => {
             process.env[INPUT_SHA1] = "";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-Dsha1=",
+                    "install"
+                ]);
         });
 
         it("should use changelist ci-friendly property", async () => {
@@ -188,7 +240,14 @@ describe("The action function", () => {
             process.env[INPUT_CHANGELIST] = ".Release";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-Dchangelist=.Release",
+                    "install"
+                ]);
         });
 
         it("should use changelist ci-friendly property when empty", async () => {
@@ -196,7 +255,14 @@ describe("The action function", () => {
             process.env[INPUT_CHANGELIST] = "";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-Dchangelist=",
+                    "install"
+                ]);
         });
 
         it("should activate single profile", async () => {
@@ -204,7 +270,14 @@ describe("The action function", () => {
             process.env[INPUT_PROFILES] = "ci";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-P=ci",
+                    "install"
+                ]);
         });
 
         it("should activate multiple profiles", async () => {
@@ -212,7 +285,15 @@ describe("The action function", () => {
             process.env[INPUT_PROFILES] = "ci cd";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-P=ci",
+                    "-P=cd",
+                    "install"
+                ]);
         });
 
         it("should use settings file", async () => {
@@ -220,7 +301,14 @@ describe("The action function", () => {
             process.env[INPUT_SETTINGS_FILE] = "test-resources/settings.xml";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-s=test-resources/settings.xml",
+                    "-f=test-resources/single-module/pom.xml",
+                    "install"
+                ]);
         });
 
         it("should use toolchains file", async () => {
@@ -229,7 +317,15 @@ describe("The action function", () => {
             process.env[INPUT_TOOLCHAINS_FILE] = "test-resources/toolchains.xml";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-t=test-resources/toolchains.xml",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-P=tools",
+                    "install"
+                ]);
         });
 
         it("should use thread count", async () => {
@@ -237,7 +333,14 @@ describe("The action function", () => {
             process.env[INPUT_THREADS] = "1";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-T=1",
+                    "install"
+                ]);
         });
 
         it("should execute with all inputs specified", async () => {
@@ -254,7 +357,26 @@ describe("The action function", () => {
             process.env[INPUT_PHASES] = "clean install";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-s=test-resources/settings.xml",
+                    "-t=test-resources/toolchains.xml",
+                    "-f=test-resources/single-module/pom.xml",
+                    "-P=ci",
+                    "-P=cd",
+                    "-P=tools",
+                    "-T=1",
+                    "-Dproperty=value",
+                    "-Dflag",
+                    "-Drevision=22.22.22",
+                    "-Dsha1=-235782193",
+                    "-Dchangelist=.Release",
+                    "ci:replace-content",
+                    "clean",
+                    "install"
+                ]);
         });
     });
 
@@ -267,28 +389,54 @@ describe("The action function", () => {
             process.env[INPUT_PHASES] = "clean";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "clean"
+                ]);
         });
 
         it("should execute multiple phases", async () => {
             process.env[INPUT_PHASES] = "clean install";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "clean",
+                    "install"
+                ]);
         });
 
         it("should execute single goal", async () => {
             process.env[INPUT_GOALS] = "ci:expand-pom";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "ci:expand-pom"
+                ]);
         });
 
         it("should execute multiple goals", async () => {
             process.env[INPUT_GOALS] = "ci:expand-pom ci:replace-content";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "ci:expand-pom",
+                    "ci:replace-content"
+                ]);
         });
 
         it("should use revision ci-friendly property", async () => {
@@ -296,7 +444,14 @@ describe("The action function", () => {
             process.env[INPUT_REVISION] = "22.22.22";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-Drevision=22.22.22",
+                    "install"
+                ]);
         });
 
         it("should use sha1 ci-friendly property", async () => {
@@ -304,7 +459,14 @@ describe("The action function", () => {
             process.env[INPUT_SHA1] = "-78125784";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-Dsha1=-78125784",
+                    "install"
+                ]);
         });
 
         it("should use sha1 ci-friendly property when empty", async () => {
@@ -312,7 +474,14 @@ describe("The action function", () => {
             process.env[INPUT_SHA1] = "";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-Dsha1=",
+                    "install"
+                ]);
         });
 
         it("should use changelist ci-friendly property", async () => {
@@ -320,7 +489,14 @@ describe("The action function", () => {
             process.env[INPUT_CHANGELIST] = ".Release";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-Dchangelist=.Release",
+                    "install"
+                ]);
         });
 
         it("should use changelist ci-friendly property when empty", async () => {
@@ -328,7 +504,14 @@ describe("The action function", () => {
             process.env[INPUT_CHANGELIST] = "";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-Dchangelist=",
+                    "install"
+                ]);
         });
 
         it("should execute single child project", async () => {
@@ -336,7 +519,15 @@ describe("The action function", () => {
             process.env[INPUT_PROJECTS] = "api";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-pl=api",
+                    "clean",
+                    "install"
+                ]);
         });
 
         it("should execute multiple child projects", async () => {
@@ -344,7 +535,16 @@ describe("The action function", () => {
             process.env[INPUT_PROJECTS] = "api ui";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-pl=api",
+                    "-pl=ui",
+                    "clean",
+                    "install"
+                ]);
         });
 
         it("should activate single profile", async () => {
@@ -352,7 +552,14 @@ describe("The action function", () => {
             process.env[INPUT_PROFILES] = "ci";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-P=ci",
+                    "install"
+                ]);
         });
 
         it("should activate multiple profiles", async () => {
@@ -360,7 +567,15 @@ describe("The action function", () => {
             process.env[INPUT_PROFILES] = "ci cd";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-P=ci",
+                    "-P=cd",
+                    "install"
+                ]);
         });
 
         it("should use settings file", async () => {
@@ -368,7 +583,14 @@ describe("The action function", () => {
             process.env[INPUT_SETTINGS_FILE] = "test-resources/settings.xml";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-s=test-resources/settings.xml",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "install"
+                ]);
         });
 
         it("should use toolchains file", async () => {
@@ -377,7 +599,15 @@ describe("The action function", () => {
             process.env[INPUT_TOOLCHAINS_FILE] = "test-resources/toolchains.xml";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-t=test-resources/toolchains.xml",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-P=tools",
+                    "install"
+                ]);
         });
 
         it("should use thread count", async () => {
@@ -385,7 +615,14 @@ describe("The action function", () => {
             process.env[INPUT_THREADS] = "1";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-T=1",
+                    "install"
+                ]);
         });
 
         it("should execute with all inputs specified", async () => {
@@ -403,7 +640,28 @@ describe("The action function", () => {
             process.env[INPUT_PHASES] = "clean install";
 
             expect(await runAction())
-                .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
+                .toHaveArguments([
+                    "--errors",
+                    "--batch-mode",
+                    "--no-transfer-progress",
+                    "-s=test-resources/settings.xml",
+                    "-t=test-resources/toolchains.xml",
+                    "-f=test-resources/multi-module/pom.xml",
+                    "-P=ci",
+                    "-P=cd",
+                    "-P=tools",
+                    "-pl=api",
+                    "-pl=ui",
+                    "-T=1",
+                    "-Dproperty=value",
+                    "-Dflag",
+                    "-Drevision=22.22.22",
+                    "-Dsha1=-235782193",
+                    "-Dchangelist=.Release",
+                    "ci:replace-content",
+                    "clean",
+                    "install"
+                ]);
         });
     });
 });
