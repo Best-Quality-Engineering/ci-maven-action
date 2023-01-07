@@ -1,6 +1,9 @@
 name: CI Maven
 description: Executes Maven goals with CI friendly properties
 inputs:
+  maven-opts:
+    description: Specifies parameters used to start up the JVM running Maven
+    required: false
   errors:
     description: Produce execution error messages
     required: false
@@ -13,13 +16,13 @@ inputs:
     description: Do not display transfer progress when downloading or uploading
     required: false
     default: "true"
-  settings-path:
+  settings-file:
     description: Alternate path for the user settings file
     required: false
-  toolchains-path:
+  toolchains-file:
     description: Alternate path for the user toolchains file
     required: false
-  project-path:
+  pom-file:
     description: Force the use of an alternate POM file (or directory with pom.xml)
     required: false
   revision:

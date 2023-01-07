@@ -203,14 +203,14 @@ describe("The MavenArguments component", () => {
 
         describe("file", () => {
             it("should ignore option when value is empty", async () => {
-                args.withFile("");
+                args.withPomFile("");
 
                 expect(args.options)
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
-                args.withFile("path/to/pom.xml");
+                args.withPomFile("path/to/pom.xml");
 
                 expect(args.options)
                     .toEqual(["-f=path/to/pom.xml"]);
@@ -291,14 +291,14 @@ describe("The MavenArguments component", () => {
 
         describe("settings", () => {
             it("should ignore option when empty", async () => {
-                args.withSettings("");
+                args.withSettingsFile("");
 
                 expect(args.options)
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
-                args.withSettings("path/to/settings.xml");
+                args.withSettingsFile("path/to/settings.xml");
 
                 expect(args.options)
                     .toEqual(["-s=path/to/settings.xml"]);
@@ -307,14 +307,14 @@ describe("The MavenArguments component", () => {
 
         describe("toolchains", () => {
             it("should ignore option when empty", async () => {
-                args.withToolchains("");
+                args.withToolchainsFile("");
 
                 expect(args.options)
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
-                args.withToolchains("path/to/toolchains.xml");
+                args.withToolchainsFile("path/to/toolchains.xml");
 
                 expect(args.options)
                     .toEqual(["-t=path/to/toolchains.xml"]);
@@ -408,9 +408,9 @@ describe("The MavenArguments component", () => {
                 .withNoTransferProgress()
                 .withChangelistProperty("-SNAPSHOT")
                 .withProjects("api")
-                .withSettings("path/to/settings.xml")
-                .withFile("path/to/pom.xml")
-                .withToolchains("path/to/toolchains.xml")
+                .withSettingsFile("path/to/settings.xml")
+                .withPomFile("path/to/pom.xml")
+                .withToolchainsFile("path/to/toolchains.xml")
                 .withThreads("5");
 
             expect(args.toArray())

@@ -31,9 +31,9 @@ jobs:
       - name: "Single Module"
         uses: ./
         with:
-          settings-path: test-resources/settings.xml
-          toolchains-path: test-resources/toolchains.xml
-          project-path: test-resources/single-module/pom.xml
+          settings-file: test-resources/settings.xml
+          toolchains-file: test-resources/toolchains.xml
+          pom-file: test-resources/single-module/pom.xml
           profiles: ci, tools
           revision: 2.22.2
           sha1: -${{github.run_id}}
@@ -42,9 +42,9 @@ jobs:
       - name: "Multi Module"
         uses: ./
         with:
-          settings-path: test-resources/settings.xml
-          toolchains-path: test-resources/toolchains.xml
-          project-path: test-resources/multi-module/pom.xml
+          settings-file: test-resources/settings.xml
+          toolchains-file: test-resources/toolchains.xml
+          pom-file: test-resources/multi-module/pom.xml
           profiles: ci, tools
           revision: 2.22.2
           sha1: -${{github.run_id}}

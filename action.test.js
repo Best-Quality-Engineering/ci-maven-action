@@ -3,13 +3,15 @@ const action = require("./action");
 require("./lib/test/action-expectations");
 
 
+const INPUT_MAVEN_OPTS = "INPUT_MAVEN-OPTS";
+
 const INPUT_ERRORS = "INPUT_ERRORS";
 const INPUT_BATCH_MODE = "INPUT_BATCH-MODE";
 const INPUT_NO_TRANSFER_PROGRESS = "INPUT_NO-TRANSFER-PROGRESS";
 
-const INPUT_SETTINGS_PATH = "INPUT_SETTINGS-PATH";
-const INPUT_TOOLCHAINS_PATH = "INPUT_TOOLCHAINS-PATH";
-const INPUT_PROJECT_PATH = "INPUT_PROJECT-PATH";
+const INPUT_SETTINGS_FILE = "INPUT_SETTINGS-FILE";
+const INPUT_TOOLCHAINS_FILE = "INPUT_TOOLCHAINS-FILE";
+const INPUT_POM_FILE = "INPUT_POM-FILE";
 const INPUT_PROFILES = "INPUT_PROFILES";
 const INPUT_PROJECTS = "INPUT_PROJECTS";
 const INPUT_THREADS = "INPUT_THREADS";
@@ -24,6 +26,13 @@ const INPUT_PHASES = "INPUT_PHASES";
 jest.setTimeout(10000);
 
 describe("The action function", () => {
+
+    async function runAction() {
+        // TODO: Capture output
+        const output = Buffer.from("[command]/usr/local/bin/mvn --errors --batch-mode --no-transfer-progress");
+        await action({outStream: undefined});
+        return output;
+    }
 
     beforeEach(() => {
         // Setup inputs with default values
@@ -41,9 +50,9 @@ describe("The action function", () => {
         delete process.env[INPUT_BATCH_MODE];
         delete process.env[INPUT_NO_TRANSFER_PROGRESS];
 
-        delete process.env[INPUT_SETTINGS_PATH];
-        delete process.env[INPUT_TOOLCHAINS_PATH];
-        delete process.env[INPUT_PROJECT_PATH];
+        delete process.env[INPUT_SETTINGS_FILE];
+        delete process.env[INPUT_TOOLCHAINS_FILE];
+        delete process.env[INPUT_POM_FILE];
         delete process.env[INPUT_PROFILES];
         delete process.env[INPUT_PROJECTS];
         delete process.env[INPUT_THREADS];
@@ -63,16 +72,9 @@ describe("The action function", () => {
         });
     });
 
-    async function runAction() {
-        // TODO: Capture output
-        const output = Buffer.from("[command]/usr/local/bin/mvn --errors --batch-mode --no-transfer-progress");
-        await action({outStream: undefined});
-        return output;
-    }
-
     describe("single module project", () => {
         beforeEach(() => {
-            process.env[INPUT_PROJECT_PATH] = "test-resources/single-module/pom.xml";
+            process.env[INPUT_POM_FILE] = "test-resources/single-module/pom.xml";
         });
 
         it("should execute single phase", async () => {
@@ -161,7 +163,7 @@ describe("The action function", () => {
 
         it("should use settings file", async () => {
             process.env[INPUT_PHASES] = "install";
-            process.env[INPUT_SETTINGS_PATH] = "test-resources/settings.xml";
+            process.env[INPUT_SETTINGS_FILE] = "test-resources/settings.xml";
 
             expect(await runAction())
                 .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
@@ -170,7 +172,7 @@ describe("The action function", () => {
         it("should use toolchains file", async () => {
             process.env[INPUT_PHASES] = "install";
             process.env[INPUT_PROFILES] = "tools";
-            process.env[INPUT_TOOLCHAINS_PATH] = "test-resources/toolchains.xml";
+            process.env[INPUT_TOOLCHAINS_FILE] = "test-resources/toolchains.xml";
 
             expect(await runAction())
                 .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
@@ -185,12 +187,13 @@ describe("The action function", () => {
         });
 
         it("should execute with all inputs specified", async () => {
+            process.env[INPUT_MAVEN_OPTS] = "-Xms256m -Xmx512m";
             process.env[INPUT_REVISION] = "22.22.22";
             process.env[INPUT_SHA1] = "-235782193";
             process.env[INPUT_CHANGELIST] = ".Release";
             process.env[INPUT_PROFILES] = "ci cd tools";
-            process.env[INPUT_SETTINGS_PATH] = "test-resources/settings.xml";
-            process.env[INPUT_TOOLCHAINS_PATH] = "test-resources/toolchains.xml";
+            process.env[INPUT_SETTINGS_FILE] = "test-resources/settings.xml";
+            process.env[INPUT_TOOLCHAINS_FILE] = "test-resources/toolchains.xml";
             process.env[INPUT_THREADS] = "1";
             process.env[INPUT_GOALS] = "ci:replace-content";
             process.env[INPUT_PHASES] = "clean install";
@@ -202,7 +205,7 @@ describe("The action function", () => {
 
     describe("multi module project", () => {
         beforeEach(() => {
-            process.env[INPUT_PROJECT_PATH] = "test-resources/multi-module/pom.xml";
+            process.env[INPUT_POM_FILE] = "test-resources/multi-module/pom.xml";
         });
 
         it("should execute single phase", async () => {
@@ -307,7 +310,7 @@ describe("The action function", () => {
 
         it("should use settings file", async () => {
             process.env[INPUT_PHASES] = "install";
-            process.env[INPUT_SETTINGS_PATH] = "test-resources/settings.xml";
+            process.env[INPUT_SETTINGS_FILE] = "test-resources/settings.xml";
 
             expect(await runAction())
                 .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
@@ -316,7 +319,7 @@ describe("The action function", () => {
         it("should use toolchains file", async () => {
             process.env[INPUT_PHASES] = "install";
             process.env[INPUT_PROFILES] = "tools";
-            process.env[INPUT_TOOLCHAINS_PATH] = "test-resources/toolchains.xml";
+            process.env[INPUT_TOOLCHAINS_FILE] = "test-resources/toolchains.xml";
 
             expect(await runAction())
                 .toHaveRunCommand("mvn --errors --batch-mode --no-transfer-progress");
@@ -331,13 +334,15 @@ describe("The action function", () => {
         });
 
         it("should execute with all inputs specified", async () => {
+            process.env[INPUT_MAVEN_OPTS] = "-Xms256m -Xmx512m";
+            process.env[INPUT_REVISION] = "22.22.22";
             process.env[INPUT_REVISION] = "22.22.22";
             process.env[INPUT_SHA1] = "-235782193";
             process.env[INPUT_CHANGELIST] = ".Release";
             process.env[INPUT_PROFILES] = "ci cd tools";
             process.env[INPUT_PROJECTS] = "api ui";
-            process.env[INPUT_SETTINGS_PATH] = "test-resources/settings.xml";
-            process.env[INPUT_TOOLCHAINS_PATH] = "test-resources/toolchains.xml";
+            process.env[INPUT_SETTINGS_FILE] = "test-resources/settings.xml";
+            process.env[INPUT_TOOLCHAINS_FILE] = "test-resources/toolchains.xml";
             process.env[INPUT_THREADS] = "1";
             process.env[INPUT_GOALS] = "ci:replace-content";
             process.env[INPUT_PHASES] = "clean install";
