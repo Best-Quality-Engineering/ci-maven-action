@@ -16,38 +16,67 @@ This action does not setup or prepare the Maven runtime; it assumes a previous a
 setup and configured the environment. The [`@actions/setup-java`](https://github.com/actions/setup-java)
 can be used for that purpose.
 
-## Minimal
+## Minimal Configuration
 
-At a minimum, a `goal` or `phase` must be provided:
+At a minimum, at least one `goal` or `phase` must be provided:
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
   goals: tools.bestquality:ci-maven-plugin:0.0.20:expand-pom
 ```
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
-  phases: clean, install
+  phases: install
 ```
-
-## Specifying CI-friendly properties
+## Activating Profiles
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
-  revision: 2.22.2
+  profiles: ci
+  phases: install
+```
+
+## CI-friendly Properties
+
+Typically, the `pom.xml` file should define the CI-friendly properties in the project's
+`<properties/>` block so consistent values are retained when building locally. When run as
+part of a workflow, they can be overridden as needed.
+
+### Release Build
+
+Example when triggering a deployment from a GitHub release where the tag contains the revision:
+
+```yaml
+uses: Best-Quality-Engineering/ci-maven-action@v1
+with:
+  revision: ${{github.ref_name}}
+  changelist: ""
+  goals: tools.bestquality:ci-maven-plugin:0.0.20:expand-pom
+  phases: clean, deploy
+```
+
+### Snapshot Build
+
+Example when triggering a workflow from a commit to a feature branch:
+
+```yaml
+uses: Best-Quality-Engineering/ci-maven-action@v1
+with:
   sha1: -${{github.run_id}}
-  changelist: -SNAPSHOT
   goals: tools.bestquality:ci-maven-plugin:0.0.20:expand-pom
   phases: clean, install
 ```
 
-## Running with custom files
+## Custom Files
+
+The various configuration file locations can be customized:
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
   settings-file: path/to/settings.xml
   toolchains-file: path/to/toolchains.xml
@@ -59,10 +88,10 @@ with:
 
 ## Defining System Properties
 
-Multiline support:
+### Multiline
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
   system-properties: |
     property=value
@@ -70,22 +99,22 @@ with:
   phases: clean, install
 ```
 
-or using a single line:
+### Inline
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
   system-properties: property=value, flag
   phases: clean, install
 ```
 
-## Specifying `MAVEN_OPTS`
+## Customizing `MAVEN_OPTS`
 
 Specifying the `maven-opts` option will cause the supplied value to override an existing
-`MAVEN_OPTS` environment variable for the duration of the command execution.
+`MAVEN_OPTS` environment variable only for the duration of the command execution:
 
 ```yaml
-uses: actions/ci-maven@v1
+uses: Best-Quality-Engineering/ci-maven-action@v1
 with:
   maven-opts: -Xms256m -Xmx512m
   phases: clean, install
