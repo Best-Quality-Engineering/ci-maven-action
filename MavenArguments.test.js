@@ -101,11 +101,11 @@ describe("The MavenArguments component", () => {
         });
 
         describe("also make", () => {
-            it("should not include toggle implicitly", async () => {
+            it("should include toggle implicitly", async () => {
                 args.withAlsoMake();
 
                 expect(args.toggles)
-                    .toEqual(new Set());
+                    .toEqual(new Set(["--also-make"]));
             });
 
             it("should include toggle when enabled", async () => {
@@ -124,11 +124,11 @@ describe("The MavenArguments component", () => {
         });
 
         describe("also make dependents", () => {
-            it("should not include toggle implicitly", async () => {
+            it("should include toggle implicitly", async () => {
                 args.withAlsoMakeDependents();
 
                 expect(args.toggles)
-                    .toEqual(new Set());
+                    .toEqual(new Set(["--also-make-dependents"]));
             });
 
             it("should include toggle when enabled", async () => {
@@ -147,11 +147,11 @@ describe("The MavenArguments component", () => {
         });
 
         describe("fail at end", () => {
-            it("should not include toggle implicitly", async () => {
+            it("should include toggle implicitly", async () => {
                 args.withFailAtEnd();
 
                 expect(args.toggles)
-                    .toEqual(new Set());
+                    .toEqual(new Set(["--fail-at-end"]));
             });
 
             it("should include toggle when enabled", async () => {
@@ -161,7 +161,7 @@ describe("The MavenArguments component", () => {
                     .toEqual(new Set(["--fail-at-end"]));
             });
 
-            it("should not include toggle when disabled", async () => {
+            it("should include toggle when disabled", async () => {
                 args.withFailAtEnd(false);
 
                 expect(args.toggles)
@@ -170,11 +170,11 @@ describe("The MavenArguments component", () => {
         });
 
         describe("fail fast", () => {
-            it("should not include toggle implicitly", async () => {
+            it("should include toggle implicitly", async () => {
                 args.withFailFast();
 
                 expect(args.toggles)
-                    .toEqual(new Set());
+                    .toEqual(new Set(["--fail-fast"]));
             });
 
             it("should include toggle when enabled", async () => {
@@ -193,11 +193,11 @@ describe("The MavenArguments component", () => {
         });
 
         describe("fail never", () => {
-            it("should not include toggle implicitly", async () => {
+            it("should include toggle implicitly", async () => {
                 args.withFailNever();
 
                 expect(args.toggles)
-                    .toEqual(new Set());
+                    .toEqual(new Set(["--fail-never"]));
             });
 
             it("should include toggle when enabled", async () => {

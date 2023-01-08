@@ -89,7 +89,7 @@ class MavenArguments {
      * @param {boolean} enabled
      * @return {MavenArguments}
      */
-    withAlsoMake(enabled = false) {
+    withAlsoMake(enabled = true) {
         return this.withToggle("--also-make", enabled);
     }
 
@@ -97,7 +97,7 @@ class MavenArguments {
      * @param {boolean} enabled
      * @return {MavenArguments}
      */
-    withAlsoMakeDependents(enabled = false) {
+    withAlsoMakeDependents(enabled = true) {
         return this.withToggle("--also-make-dependents", enabled);
     }
 
@@ -105,7 +105,7 @@ class MavenArguments {
      * @param {boolean} enabled
      * @return {MavenArguments}
      */
-    withFailAtEnd(enabled = false) {
+    withFailAtEnd(enabled = true) {
         return this.withToggle("--fail-at-end", enabled);
     }
 
@@ -113,7 +113,7 @@ class MavenArguments {
      * @param {boolean} enabled
      * @return {MavenArguments}
      */
-    withFailFast(enabled = false) {
+    withFailFast(enabled = true) {
         return this.withToggle("--fail-fast", enabled);
     }
 
@@ -121,7 +121,7 @@ class MavenArguments {
      * @param {boolean} enabled
      * @return {MavenArguments}
      */
-    withFailNever(enabled = false) {
+    withFailNever(enabled = true) {
         return this.withToggle("--fail-never", enabled);
     }
 
