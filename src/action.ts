@@ -1,19 +1,15 @@
-const core = require("@actions/core");
-const exec = require("@actions/exec");
-const MavenArguments = require("./MavenArguments")
+import * as core from "@actions/core";
+import {exec, ExecListeners} from "@actions/exec";
+import MavenArguments from "./MavenArguments";
 
-/**
- * @param {exec.ExecListeners} listeners
- * @return {Promise<void>}
- */
-const action = async (listeners = undefined) => {
+const action = async (listeners: ExecListeners | undefined = undefined): Promise<void> => {
     const originalMavenOptions = process.env.MAVEN_OPTS;
     try {
         const overrideMavenOptions = core.getInput("maven-opts", {required: false});
         if (overrideMavenOptions) {
             process.env.MAVEN_OPTS = overrideMavenOptions;
         }
-        await exec.exec(
+        await exec(
             "mvn",
             new MavenArguments()
                 // Toggle Options
@@ -46,12 +42,12 @@ const action = async (listeners = undefined) => {
                 failOnStdErr: true,
                 listeners
             });
-    } catch (error) {
+    } catch (error: any) {
         core.setFailed(error.message);
         throw error;
     } finally {
         process.env.MAVEN_OPTS = originalMavenOptions;
     }
-}
+};
 
-module.exports = action;
+export default action;
