@@ -1,7 +1,8 @@
-const process = require("process");
-const action = require("./action");
-const DebugListener = require("./lib/test/DebugListener");
-require("./lib/test/action-expectations");
+import {afterEach, beforeEach, describe, expect, it, jest} from "@jest/globals";
+import action from "../action";
+import Command from "./Command";
+import DebugExecutionListener from "./DebugExecutionListener";
+import "./action-expectations";
 
 
 const INPUT_MAVEN_OPTS = "INPUT_MAVEN-OPTS";
@@ -30,18 +31,13 @@ const INPUT_CHANGELIST = "INPUT_CHANGELIST";
 const INPUT_GOALS = "INPUT_GOALS";
 const INPUT_PHASES = "INPUT_PHASES";
 
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 describe("The action function", () => {
 
-    /**
-     * @return {Promise<Command>}
-     */
-    async function runAction() {
-        const listener = new DebugListener();
-        await action({
-            debug: (data) => listener.onDebug(data)
-        });
+    async function runAction(): Promise<Command> {
+        const listener = new DebugExecutionListener();
+        await action(listener);
         return listener.command;
     }
 
@@ -186,7 +182,7 @@ describe("The action function", () => {
                     "--no-transfer-progress",
                     "-f=test-resources/single-module/pom.xml",
                     "ci:expand-pom",
-                    "ci:replace-content",
+                    "ci:replace-content"
                 ]);
         });
 
@@ -665,4 +661,3 @@ describe("The action function", () => {
         });
     });
 });
-

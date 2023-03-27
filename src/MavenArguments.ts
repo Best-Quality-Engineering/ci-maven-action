@@ -1,42 +1,32 @@
 /**
  * Encapsulates the available Maven command line arguments
  */
-class MavenArguments {
+export default class MavenArguments {
+    private readonly toggles: Set<string>;
+    private readonly options: string[];
+    private readonly goals: string[];
+    private readonly phases: string[];
 
     constructor() {
-        this.toggles = new Set();
+        this.toggles = new Set<string>();
         this.options = [];
         this.goals = [];
         this.phases = [];
     }
 
-    /**
-     * @param {string} name
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withToggle(name, enabled = true) {
+    withToggle(name: string, enabled: boolean = true): MavenArguments {
         if (enabled) {
             this.toggles.add(name);
         }
         return this;
     }
 
-    /**
-     * @param {string} option
-     * @return {MavenArguments}
-     */
-    withOption(option) {
+    withOption(option: string): MavenArguments {
         this.options.push(option);
         return this;
     }
 
-    /**
-     * @param {string} name
-     * @param {string} value
-     * @return {MavenArguments}
-     */
-    withSystemProperty(name, value = undefined) {
+    withSystemProperty(name: string, value: string | undefined = undefined): MavenArguments {
         if (value === undefined) {
             this.withOption(`-D${name}`);
         } else {
@@ -45,11 +35,7 @@ class MavenArguments {
         return this;
     }
 
-    /**
-     * @param {string[]} lines
-     * @return {MavenArguments}
-     */
-    withSystemProperties(lines = []) {
+    withSystemProperties(lines: string[] = []): MavenArguments {
         lines.flatMap(line =>
             line.split(",")
                 .map(definition => definition.trim())
@@ -61,108 +47,60 @@ class MavenArguments {
         return this;
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withErrors(enabled = true) {
+    withErrors(enabled: boolean = true): MavenArguments {
         return this.withToggle("--errors", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withNoTransferProgress(enabled = true) {
+    withNoTransferProgress(enabled: boolean = true): MavenArguments {
         return this.withToggle("--no-transfer-progress", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withBatchMode(enabled = true) {
+    withBatchMode(enabled: boolean = true): MavenArguments {
         return this.withToggle("--batch-mode", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withAlsoMake(enabled = true) {
+    withAlsoMake(enabled: boolean = true): MavenArguments {
         return this.withToggle("--also-make", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withAlsoMakeDependents(enabled = true) {
+    withAlsoMakeDependents(enabled: boolean = true): MavenArguments {
         return this.withToggle("--also-make-dependents", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withFailAtEnd(enabled = true) {
+    withFailAtEnd(enabled: boolean = true): MavenArguments {
         return this.withToggle("--fail-at-end", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withFailFast(enabled = true) {
+    withFailFast(enabled: boolean = true): MavenArguments {
         return this.withToggle("--fail-fast", enabled);
     }
 
-    /**
-     * @param {boolean} enabled
-     * @return {MavenArguments}
-     */
-    withFailNever(enabled = true) {
+    withFailNever(enabled: boolean = true): MavenArguments {
         return this.withToggle("--fail-never", enabled);
     }
 
-    /**
-     * @param {string} file
-     * @return {MavenArguments}
-     */
-    withSettingsFile(file = "") {
+    withSettingsFile(file: string = ""): MavenArguments {
         if (file) {
             this.withOption(`-s=${file}`);
         }
         return this;
     }
 
-    /**
-     * @param {string} file
-     * @return {MavenArguments}
-     */
-    withToolchainsFile(file = "") {
+    withToolchainsFile(file: string = ""): MavenArguments {
         if (file) {
             this.withOption(`-t=${file}`);
         }
         return this;
     }
 
-    /**
-     * @param {string} file
-     * @return {MavenArguments}
-     */
-    withPomFile(file = "") {
+    withPomFile(file: string = ""): MavenArguments {
         if (file) {
             this.withOption(`-f=${file}`);
         }
         return this;
     }
 
-    /**
-     * @param {string} profiles
-     * @return {MavenArguments}
-     */
-    withProfiles(profiles = "") {
+    withProfiles(profiles: string = ""): MavenArguments {
         profiles.split(/[ ,]+/)
             .map(profile => profile.trim())
             .filter(profile => profile !== "")
@@ -170,11 +108,7 @@ class MavenArguments {
         return this;
     }
 
-    /**
-     * @param {string} projects
-     * @return {MavenArguments}
-     */
-    withProjects(projects = "") {
+    withProjects(projects: string = ""): MavenArguments {
         projects.split(/[ ,]+/)
             .map(project => project.trim())
             .filter(project => project !== "")
@@ -182,82 +116,83 @@ class MavenArguments {
         return this;
     }
 
-    /**
-     * @param {string} threads
-     * @return {MavenArguments}
-     */
-    withThreads(threads = "") {
+    withThreads(threads: string = ""): MavenArguments {
         if (threads) {
             this.withOption(`-T=${threads}`);
         }
         return this;
     }
 
-    /**
-     * @param {string} revision
-     * @return {MavenArguments}
-     */
-    withRevisionProperty(revision) {
+    withRevisionProperty(revision: string | undefined): MavenArguments {
         if (revision !== undefined && revision !== "undefined") {
             this.withSystemProperty("revision", revision);
         }
         return this;
     }
 
-    /**
-     * @param {string} sha1
-     * @return {MavenArguments}
-     */
-    withSha1Property(sha1) {
+    withSha1Property(sha1: string | undefined): MavenArguments {
         if (sha1 !== undefined && sha1 !== "undefined") {
             this.withSystemProperty("sha1", sha1);
         }
         return this;
     }
 
-    /**
-     * @param {string} changelist
-     * @return {MavenArguments}
-     */
-    withChangelistProperty(changelist) {
+    withChangelistProperty(changelist: string | undefined): MavenArguments {
         if (changelist !== undefined && changelist !== "undefined") {
             this.withSystemProperty("changelist", changelist);
         }
         return this;
     }
 
-    /**
-     * @param {string} goals
-     * @return {MavenArguments}
-     */
-    withGoals(goals = "") {
-        this.goals = goals
-            .split(/[ ,]+/)
+    withGoal(goal: string): MavenArguments {
+        this.goals.push(goal);
+        return this;
+    }
+
+    withGoals(goals: string = ""): MavenArguments {
+        this.goals.length = 0;
+        goals.split(/[ ,]+/)
             .map(goal => goal.trim())
-            .filter(goal => goal !== "");
+            .filter(goal => goal !== "")
+            .forEach(goal => this.withGoal(goal));
         return this;
     }
 
-    /**
-     * @param {string} phases
-     * @return {MavenArguments}
-     */
-    withPhases(phases = "") {
-        this.phases = phases
-            .split(/[ ,]+/)
+    withPhase(phase: string): MavenArguments {
+        this.phases.push(phase);
+        return this;
+    }
+
+    withPhases(phases: string = ""): MavenArguments {
+        this.phases.length = 0;
+        phases.split(/[ ,]+/)
             .map(phase => phase.trim())
-            .filter(phase => phase !== "");
+            .filter(phase => phase !== "")
+            .forEach(phase => this.withPhase(phase));
         return this;
     }
 
-    /**
-     * @return {string[]}
-     */
-    toArray() {
+    getToggles(): Set<string> {
+        return new Set<string>(this.toggles);
+    }
+
+    getOptions(): string[] {
+        return [...this.options];
+    }
+
+    getGoals(): string[] {
+        return [...this.goals];
+    }
+
+    getPhases(): string[] {
+        return [...this.phases];
+    }
+
+    toArray(): string[] {
         if (this.goals.length === 0 && this.phases.length === 0) {
-            throw new Error("Maven goal(s) and/or phase(s) to execute must be specified")
+            throw new Error("Maven goal(s) and/or phase(s) to execute must be specified");
         }
-        const args = [];
+        const args: string[] = [];
         this.toggles.forEach(toggle => args.push(toggle));
         this.options.forEach(option => args.push(option));
         this.goals.forEach(goal => args.push(goal));
@@ -265,5 +200,3 @@ class MavenArguments {
         return args;
     }
 }
-
-module.exports = MavenArguments;

@@ -1,7 +1,8 @@
-const MavenArguments = require("./MavenArguments");
+import {beforeEach, describe, expect, it} from "@jest/globals";
+import MavenArguments from "../MavenArguments";
 
 describe("The MavenArguments component", () => {
-    let args;
+    let args: MavenArguments;
 
     beforeEach(() => {
         args = new MavenArguments();
@@ -12,21 +13,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withToggle("name");
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["name"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withToggle("name", true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["name"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withToggle("name", false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -35,21 +36,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withBatchMode();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--batch-mode"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withBatchMode(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--batch-mode"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withBatchMode(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -58,21 +59,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withErrors();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--errors"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withErrors(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--errors"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withErrors(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -81,21 +82,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withNoTransferProgress();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--no-transfer-progress"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withNoTransferProgress(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--no-transfer-progress"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withNoTransferProgress(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -104,21 +105,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withAlsoMake();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--also-make"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withAlsoMake(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--also-make"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withAlsoMake(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -127,21 +128,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withAlsoMakeDependents();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--also-make-dependents"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withAlsoMakeDependents(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--also-make-dependents"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withAlsoMakeDependents(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -150,21 +151,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withFailAtEnd();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--fail-at-end"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withFailAtEnd(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--fail-at-end"]));
             });
 
             it("should include toggle when disabled", async () => {
                 args.withFailAtEnd(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -173,21 +174,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withFailFast();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--fail-fast"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withFailFast(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--fail-fast"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withFailFast(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -196,21 +197,21 @@ describe("The MavenArguments component", () => {
             it("should include toggle implicitly", async () => {
                 args.withFailNever();
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--fail-never"]));
             });
 
             it("should include toggle when enabled", async () => {
                 args.withFailNever(true);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set(["--fail-never"]));
             });
 
             it("should not include toggle when disabled", async () => {
                 args.withFailNever(false);
 
-                expect(args.toggles)
+                expect(args.getToggles())
                     .toEqual(new Set());
             });
         });
@@ -221,7 +222,7 @@ describe("The MavenArguments component", () => {
             it("should add option", async () => {
                 args.withOption("option");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["option"]);
             });
         });
@@ -230,14 +231,14 @@ describe("The MavenArguments component", () => {
             it("should ignore option when value is empty", async () => {
                 args.withPomFile("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
                 args.withPomFile("path/to/pom.xml");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-f=path/to/pom.xml"]);
             });
         });
@@ -246,21 +247,21 @@ describe("The MavenArguments component", () => {
             it("should ignore option when value is empty", async () => {
                 args.withProfiles("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should support a single value", async () => {
                 args.withProfiles(" ci ");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-P=ci"]);
             });
 
             it("should support multiple values", async () => {
                 args.withProfiles(" ci    release ");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([
                         "-P=ci",
                         "-P=release"
@@ -270,7 +271,7 @@ describe("The MavenArguments component", () => {
             it("should support CSV", async () => {
                 args.withProfiles(" ci,    release");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([
                         "-P=ci",
                         "-P=release"
@@ -282,21 +283,21 @@ describe("The MavenArguments component", () => {
             it("should ignore option when empty", async () => {
                 args.withProjects("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should support a single value", async () => {
                 args.withProjects(" api ");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-pl=api"]);
             });
 
             it("should support multiple values", async () => {
                 args.withProjects(" api    ui ");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([
                         "-pl=api",
                         "-pl=ui"
@@ -306,7 +307,7 @@ describe("The MavenArguments component", () => {
             it("should support CSV", async () => {
                 args.withProjects(" api,    ui");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([
                         "-pl=api",
                         "-pl=ui"
@@ -318,14 +319,14 @@ describe("The MavenArguments component", () => {
             it("should ignore option when empty", async () => {
                 args.withSettingsFile("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
                 args.withSettingsFile("path/to/settings.xml");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-s=path/to/settings.xml"]);
             });
         });
@@ -334,14 +335,14 @@ describe("The MavenArguments component", () => {
             it("should ignore option when empty", async () => {
                 args.withToolchainsFile("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
                 args.withToolchainsFile("path/to/toolchains.xml");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-t=path/to/toolchains.xml"]);
             });
         });
@@ -350,14 +351,14 @@ describe("The MavenArguments component", () => {
             it("should ignore option when empty", async () => {
                 args.withThreads("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should apply option when value is present", async () => {
                 args.withThreads("5");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-T=5"]);
             });
         });
@@ -369,38 +370,38 @@ describe("The MavenArguments component", () => {
             it("should add system property with no value", async () => {
                 args.withSystemProperty("property");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dproperty"]);
             });
 
             it("should add system property with value", async () => {
                 args.withSystemProperty("property", "value");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dproperty=value"]);
             });
 
             it("should parse single line input containing one property with no value", async () => {
                 args.withSystemProperties(["property"]);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dproperty"]);
             });
 
             it("should parse single line input containing one property with value", async () => {
                 args.withSystemProperties(["property=value"]);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dproperty=value"]);
             });
 
             it("should parse single line input containing multiple properties", async () => {
                 args.withSystemProperties(["property-1=value-1, property-2"]);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([
                         "-Dproperty-1=value-1",
-                        "-Dproperty-2",
+                        "-Dproperty-2"
                     ]);
             });
 
@@ -410,7 +411,7 @@ describe("The MavenArguments component", () => {
                     "property-3, property-4=value-4"
                 ]);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([
                         "-Dproperty-1=value-1",
                         "-Dproperty-2",
@@ -422,90 +423,90 @@ describe("The MavenArguments component", () => {
 
         describe("revision", () => {
             it("should not specify option when undefined", async () => {
-                args.withRevisionProperty();
+                args.withRevisionProperty(undefined);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should not specify option when value equals undefined", async () => {
                 args.withRevisionProperty("undefined");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should specify option when value is empty", async () => {
                 args.withRevisionProperty("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Drevision="]);
             });
 
             it("should specify option when value is present", async () => {
                 args.withRevisionProperty("2.2.2");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Drevision=2.2.2"]);
             });
         });
 
         describe("sha1", () => {
             it("should not specify option when undefined", async () => {
-                args.withSha1Property();
+                args.withSha1Property(undefined);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should not specify option when value equals undefined", async () => {
                 args.withSha1Property("undefined");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should specify option when value is empty", async () => {
                 args.withSha1Property("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dsha1="]);
             });
 
             it("should specify option when value is present", async () => {
                 args.withSha1Property("-12345");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dsha1=-12345"]);
             });
         });
 
         describe("changelist", () => {
             it("should not specify option when undefined", async () => {
-                args.withChangelistProperty();
+                args.withChangelistProperty(undefined);
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should not specify option when value equals undefined", async () => {
                 args.withChangelistProperty("undefined");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual([]);
             });
 
             it("should specify option when value is empty", async () => {
                 args.withChangelistProperty("");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dchangelist="]);
             });
 
             it("should specify option when value is present", async () => {
                 args.withChangelistProperty("-SNAPSHOT");
 
-                expect(args.options)
+                expect(args.getOptions())
                     .toEqual(["-Dchangelist=-SNAPSHOT"]);
             });
         });
@@ -515,14 +516,14 @@ describe("The MavenArguments component", () => {
         it("should support single value", async () => {
             args.withGoals(" ci:expand-pom ");
 
-            expect(args.goals)
+            expect(args.getGoals())
                 .toEqual(["ci:expand-pom"]);
         });
 
         it("should support multiples values", async () => {
             args.withGoals(" ci:expand-pom    ci:replace-content ");
 
-            expect(args.goals)
+            expect(args.getGoals())
                 .toEqual([
                     "ci:expand-pom",
                     "ci:replace-content"
@@ -532,7 +533,7 @@ describe("The MavenArguments component", () => {
         it("should support CSV", async () => {
             args.withGoals(" ci:expand-pom,   ci:replace-content ");
 
-            expect(args.goals)
+            expect(args.getGoals())
                 .toEqual([
                     "ci:expand-pom",
                     "ci:replace-content"
@@ -544,21 +545,21 @@ describe("The MavenArguments component", () => {
         it("should support single value", async () => {
             args.withPhases(" install ");
 
-            expect(args.phases)
+            expect(args.getPhases())
                 .toEqual(["install"]);
         });
 
         it("should support multiples values", async () => {
             args.withPhases(" clean    install ");
 
-            expect(args.phases)
+            expect(args.getPhases())
                 .toEqual(["clean", "install"]);
         });
 
         it("should support CSV", async () => {
             args.withPhases(" clean,  install ");
 
-            expect(args.phases)
+            expect(args.getPhases())
                 .toEqual(["clean", "install"]);
         });
     });
@@ -606,4 +607,4 @@ describe("The MavenArguments component", () => {
                 ]);
         });
     });
-})
+});
